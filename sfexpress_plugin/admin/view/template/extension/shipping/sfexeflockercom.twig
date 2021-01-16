@@ -1,0 +1,186 @@
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+
+    <div class="container-fluid">
+      <div class="pull-right">
+		<a href="{{ refresh_data_href }}" data-toggle="tooltip" title="{{ button_refresh }}" class="btn btn-default"><i class="fa fa-refresh"></i></a>
+		<button type="submit" form="form-fedex" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+
+      <h1>{{ heading_title }}</h1>
+
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-fedex" class="form-horizontal">
+
+		  <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-key">{{ entry_freelimit }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="shipping_sfexeflockercom_freelimit" value="{{ shipping_sfexeflockercom_freelimit }}" placeholder="{{ entry_freelimit }}" id="input-key" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-tax-class">{{ entry_tax_class }}</label>
+            <div class="col-sm-10">
+              <select name="shipping_sfexeflockercom_tax_class_id" id="input-tax-class" class="form-control">
+                <option value="0">{{ text_none }}</option>
+                {% for tax_class in tax_classes %}
+                {% if tax_class.tax_class_id == shipping_sfexeflockercom_tax_class_id %}
+                <option value="{{ tax_class.tax_class_id }}" selected="selected">{{ tax_class.title }}</option>
+                {% else %}
+                <option value="{{ tax_class.tax_class_id }}">{{ tax_class.title }}</option>
+                {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-geo-zone">{{ entry_geo_zone }}</label>
+            <div class="col-sm-10">
+              <select name="shipping_sfexeflockercom_geo_zone_id" id="input-geo-zone" class="form-control">
+                <option value="0">{{ text_all_zones }}</option>
+                {% for geo_zone in geo_zones %}
+                {% if geo_zone.geo_zone_id == shipping_sfexeflockercom_geo_zone_id %}
+                <option value="{{ geo_zone.geo_zone_id }}" selected="selected">{{ geo_zone.name }}</option>
+                {% else %}
+                <option value="{{ geo_zone.geo_zone_id }}">{{ geo_zone.name }}</option>
+                {% endif %}
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="shipping_sfexeflockercom_status" id="input-status" class="form-control">
+                {% if shipping_sfexeflockercom_status %}
+                <option value="1" selected="selected">{{ text_enabled }}</option>
+                <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                <option value="1">{{ text_enabled }}</option>
+                <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="shipping_sfexeflockercom_sort_order" value="{{ shipping_sfexeflockercom_sort_order }}" placeholder="{{ entry_sort_order }}" id="input-sort-order" class="form-control" />
+            </div>
+          </div>
+		  
+       <table id="shipping_sfexeflockercom-weight-shipping" class="list table">
+          <thead>
+            <tr>
+              <td class="left"><span data-toggle="tooltip" title="{{ entry_weight_from_tooltip }}">{{ entry_weight_from }}</span></td>
+              <td class="left"><span data-toggle="tooltip" title="{{ entry_weight_to_tooltip }}">{{ entry_weight_to }}</span></td>
+              <td class="left">{{ entry_first }}</td>
+              <td class="left">{{ entry_next }}</td>
+              <td></td>
+            </tr>
+          </thead>
+          
+          {% set row = 0 %}
+            {% if shipping_sfexeflockercom_weight_data %}
+			  {% for gtwd in shipping_sfexeflockercom_weight_data %}
+	          <tbody id="shipping_sfexeflockercom-weight-row-{{ row }}">
+	            <tr>	              
+	              <td>
+	              	<input class="form-control" type="text" size="4" maxlength="9" name="shipping_sfexeflockercom_weight_data[{{ row }}][weight_from]" value="{{ gtwd.weight_from|number_format(2, '.', '') }}" />
+	              </td>
+	              
+	              <td>
+	              	<input class="form-control" type="text" size="4" maxlength="9" name="shipping_sfexeflockercom_weight_data[{{ row }}][weight_to]" value="{{ gtwd.weight_to|number_format(2, '.', '') }}" />
+	              </td>
+
+	              <td>
+	              	<input class="form-control" type="text" size="4" maxlength="9" name="shipping_sfexeflockercom_weight_data[{{ row }}][cost]" value="{{ gtwd.cost|number_format(2, '.', '') }}" />
+	              </td>
+	              
+	              <td>
+	              	<input class="form-control" type="text" size="4" maxlength="9" name="shipping_sfexeflockercom_weight_data[{{ row }}][each_next]" value="{{ gtwd.each_next|number_format( 2, '.', '') }}" />
+	              </td>
+
+	              <td class="left">
+	              	<a onclick="$('#shipping_sfexeflockercom-weight-row-{{ row }}').remove();" class="btn btn-danger">{{ button_remove }}</a>
+	              </td>
+	            </tr>
+	          </tbody>
+	          {% set row = row + 1 %}
+	          {% endfor %}
+	        {% endif %}
+          <tfoot>
+            <tr>
+              <td colspan="8"></td>
+              <td class="left"><a onclick="addRow();" class="btn btn-success">{{ button_add }}</a></td>
+            </tr>
+          </tfoot>
+        </table>
+		  
+<script type="text/javascript"><!--
+var row = {{ row }};
+
+function addRow() {
+	html  = '<tbody id="shipping_sfexeflockercom-weight-row-' + row + '">';
+	html += '<tr>';
+		html += '<td><input class="form-control" size="5" maxlength="9" type="text" name="shipping_sfexeflockercom_weight_data['+row+'][weight_from]" value="0.00" />';
+		html += '<td><input class="form-control" size="5" maxlength="9" type="text" name="shipping_sfexeflockercom_weight_data['+row+'][weight_to]" value="0.00" />';
+		html += '<td><input class="form-control" size="5" maxlength="9" type="text" name="shipping_sfexeflockercom_weight_data['+row+'][cost]" value="0.00" />';
+	    html += '<td><input class="form-control" size="5" maxlength="9" type="text" name="shipping_sfexeflockercom_weight_data['+row+'][each_next]" value="0.00" />';
+		html += '<td class="left"><a onclick="$(\'#shipping_sfexeflockercom-weight-row-' + row + '\').remove();" class="btn btn-danger">{{ button_remove }}</a></td>';
+	html += '</tr>';
+	html += '</tbody>';
+	
+	$('#shipping_sfexeflockercom-weight-shipping > tfoot').before(html);
+		
+	row++;
+}
+//--></script> 
+		  
+		  <table class="table table-bordered table-hover">
+			  <thead>
+				<tr>
+					<td class="text-left">Place</td>
+					<td class="text-left">Region</td>
+				</tr>
+			  </thead>
+			  <tbody>
+				  {% if shipping_sfexeflockercom_places %}
+				  {% for place in shipping_sfexeflockercom_places %}
+				  <tr>
+					<td class="text-left">{{ place.dickup_place }}</td>
+					<td class="text-left">{{ place.dickup_region }}</td>
+				  </tr>
+                  {% endfor %}
+				  {% else %}
+				  <tr>
+					<td class="center" colspan="3">Nothing found</td>
+				  </tr>
+				  {% endif %}
+			  </tbody>
+		  </table>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}
